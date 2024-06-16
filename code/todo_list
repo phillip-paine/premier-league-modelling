@@ -1,0 +1,7 @@
+# increase prob. of draws to reflect observed pros. -- this actually looks good during Monte Carlo simulations
+# home adv. groups (e.g. top-middle-bottom teams to estimate better) -- generally too many home goals from home_adv param
+-- it gives a 37% increase to goals but expect something more like 20% increase on avg.
+# add mid-season predict + table estimates (by using mix of real results + upcoming fixtures)
+# ^ includes updating estimates of att + def params as mixture distribution of start-of-season + season-so-far results
+# Optional: During MC sim of seasons update att + def periodically to get more varied results given simmed results
+# finish table graphic to display with expected for + against and final position distributions
