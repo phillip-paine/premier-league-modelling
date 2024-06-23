@@ -13,6 +13,7 @@ DIR = "~/Documents/Code/premier-league-modelling"
 
 class DataPreparation:
     def __init__(self, seasons=None):
+        self.gameweek = None
         if seasons is None:
             self.seasons = ['2021', '2122', '2223']
         else:
@@ -74,6 +75,12 @@ class DataPreparation:
         self.df['match'] = 1
         self.df['HomeTeamInt'] = self.df.apply(lambda row: self.team_map.get(row['season']).get(row['HomeTeam']), axis=1)
         self.df['AwayTeamInt'] = self.df.apply(lambda row: self.team_map.get(row['season']).get(row['AwayTeam']), axis=1)
+        self._calculate_gameweek()
+
+    def _calculate_gameweek(self) -> None:
+        # lets just divide by 10 to get a good guess of the gameweek
+        self.gameweek = len(self.df.index) // 10
+        return None
 
     def store_locally(self, overwrite: bool):
         if os.path.exists(self.filepath) and not overwrite:
@@ -211,13 +218,14 @@ class Modelling:
 
 
 class Results:
-    def __init__(self, team_coefs, fixtures, home_adv):
+    def __init__(self, team_coefs, fixtures, home_adv, last_results_date: str):
         self.df_goals_for_against = pd.DataFrame()
         self.complete_table_df = None
         self.df_mean_goals = pd.DataFrame()
         self.df_mean_results_set = pd.DataFrame()
         self.table_mean_goals = pd.DataFrame()
 
+        self.last_results_date = last_results_date
         self.home_adv = home_adv
         self.df_coef = team_coefs
         self._team_normalised_goals_for_and_against()
@@ -267,6 +275,11 @@ class Results:
         results_col = ""
         if prediction_set:
             results_col = "predicted_result"
+            # Replace the prediction column with the real results less than date:
+            df_prediction[results_col] = np.where(df_prediction['Date'] > self.last_results_date,
+                                                  df_prediction[results_col],
+                                                  df_prediction['FTR'])
+            # Note that if we want a pure prediction we can just set the last_results_date to before season starts
         else:
             results_col = 'FTR'
         if df_prediction.empty:
