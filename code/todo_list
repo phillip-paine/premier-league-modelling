@@ -1,0 +1,4 @@
+# create the table for displaying table prediction and end of season position distribution
+# we will save the coefficients for a new week results to a bucket (or similar - use filename with "as of date")
+# this will mean we can create a slider to choose the "as of date" to predict from
+# in fact, why not just save the entire predicted table? This makes more sense
